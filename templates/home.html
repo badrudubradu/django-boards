@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% load widget_tweaks %}
+
+{% block title %}Boards{% endblock %}
+
+{% block breadcrumb %}
+  <li class="breadcrumb-item"><a href="{% url 'home' %}">Boards</a></li>
+{% endblock %}
+
+{% block content %}
+  <table class="table">
+
+    <thead class="thead-dark">
+      <tr>
+        <th style="width:100px;">Board</th>
+        <th style="width:20px;">Posts</th>
+        <th style="width:20px;">Topics</th>
+        <th style="width:50px;">Last Post</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for board in boards %}
+        <tr>
+          <td style="width:100px;">
+            <a href="{% url 'board_topics' board.pk %}">{{ board.name }}</a><br>
+            <small class="text-muted d-block">{{ board.description }}</small>
+          </td>
+          <td class="align-middle" style="width:20px;">{{board.get_post_count}}</td>
+          <td class="align-middle" style="width:20px;">{{board.get_topic_count}}</td>
+          {% with board.get_last_post as post %}
+            <small>
+              <td class="align-middle" style="width:50px;">
+                <a href="{% url 'topic_posts' board.pk post.topic.pk %}">
+                  {{post.created_at}} <br> By {{post.created_by.username}}
+                </a>
+              </td></small>
+          {% endwith %}
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% include 'includes/pagination.html' %}
+
+{% endblock %}
+
+{% block command %}
+  <button type="submit" class="btn"><a href="{% url 'new_board' %}"> New Board </a></button>
+{% endblock %}
